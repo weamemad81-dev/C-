@@ -1,0 +1,510 @@
+﻿using System;
+using System.Diagnostics;
+
+class Program
+{
+    static void ByValue(int x)
+    {
+        x = 20;
+    }
+
+    static void ByReference(ref int x)
+    {
+        x = 20;
+    }
+
+    static void Main()
+    {
+        int a = 10;
+        ByValue(a);
+        Console.WriteLine(a); // 10
+
+        int b = 10;
+        ByReference(ref b);
+        Console.WriteLine(b); // 20
+    }
+}
+
+
+using System;
+
+class Person
+{
+    public string Name;
+}
+
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+class Program
+{
+    static void ByValue(Person p)
+    {
+        p.Name = "Ahmed";
+        p = new Person();
+        p.Name = "Ali";
+    }
+
+    static void ByReference(ref Person p)
+    {
+        p = new Person();
+        p.Name = "Ali";
+    }
+
+    static void Main()
+    {
+        Person person1 = new Person();
+        person1.Name = "Omar";
+
+        ByValue(person1);
+        Console.WriteLine(person1.Name); // Ahmed
+
+        Person person2 = new Person();
+        person2.Name = "Omar";
+
+        ByReference(ref person2);
+        Console.WriteLine(person2.Name); // Ali
+    }
+
+    private string GetDebuggerDisplay()
+    {
+        return ToString();
+    }
+}
+
+
+using System;
+
+class Program
+{
+    static void Calculate(int a, int b, int c, int d, out int sum, out int subtract)
+    {
+        sum = a + b;
+        subtract = c - d;
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter first number: ");
+        int a = int.Parse(Console.ReadLine());
+
+        Console.Write("Enter second number: ");
+        int b = int.Parse(Console.ReadLine());
+
+        Console.Write("Enter third number: ");
+        int c = int.Parse(Console.ReadLine());
+
+        Console.Write("Enter fourth number: ");
+        int d = int.Parse(Console.ReadLine());
+
+        int sum, subtract;
+
+        Calculate(a, b, c, d, out sum, out subtract);
+
+        Console.WriteLine("Sum = " + sum);
+        Console.WriteLine("Subtraction = " + subtract);
+    }
+}
+
+
+using System;
+
+class Program
+{
+    static int SumDigits(int number)
+    {
+        int sum = 0;
+
+        while (number != 0)
+        {
+            sum += number % 10;
+            number /= 10;
+        }
+
+        return sum;
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter a number: ");
+        int number = int.Parse(Console.ReadLine());
+
+        int result = SumDigits(number);
+
+        Console.WriteLine("The sum of the digits of the number "
+                          + number + " is: " + result);
+    }
+}
+
+//////Enter a number: 25
+The sum of the digits of the number 25 is: 7////////
+
+
+
+
+
+
+using System;
+
+class Program
+{
+    static bool IsPrime(int number)
+    {
+        if (number < 2)
+            return false;
+
+        for (int i = 2; i < number; i++)
+        {
+            if (number % i == 0)
+                return false;
+        }
+
+        return true;
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter a number: ");
+        int number = int.Parse(Console.ReadLine());
+
+        Console.WriteLine(IsPrime(number));
+    }
+}
+
+
+using System;
+
+class Program
+{
+    static void MinMaxArray(int[] arr, ref int min, ref int max)
+    {
+        min = arr[0];
+        max = arr[0];
+
+        for (int i = 1; i < arr.Length; i++)
+        {
+            if (arr[i] < min)
+                min = arr[i];
+
+            if (arr[i] > max)
+                max = arr[i];
+        }
+    }
+
+    static void Main()
+    {
+        int[] arr = { 5, 2, 9, 1, 7 };
+
+        int min = 0;
+        int max = 0;
+
+        MinMaxArray(arr, ref min, ref max);
+
+        Console.WriteLine("Minimum = " + min);
+        Console.WriteLine("Maximum = " + max);
+    }
+}
+
+
+using System;
+
+class Program
+{
+    static long Factorial(int number)
+    {
+        long result = 1;
+
+        for (int i = 1; i <= number; i++)
+        {
+            result *= i;
+        }
+
+        return result;
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter a number: ");
+        int number = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Factorial = " + Factorial(number));
+    }
+}
+
+
+
+using System;
+
+class Program
+{
+    static string ChangeChar(string text, int position, char newChar)
+    {
+        char[] chars = text.ToCharArray();
+
+        chars[position] = newChar;
+
+        return new string(chars);
+    }
+
+    static void Main()
+    {
+        Console.Write("Enter a string: ");
+        string text = Console.ReadLine();
+
+        Console.Write("Enter position: ");
+        int position = int.Parse(Console.ReadLine());
+
+        Console.Write("Enter new character: ");
+        char newChar = char.Parse(Console.ReadLine());
+
+        Console.WriteLine(ChangeChar(text, position, newChar));
+    }
+}
+
+
+
+using System;
+
+enum WeekDays
+{
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday
+}
+
+class Program
+{
+    static void Main()
+    {
+        foreach (WeekDays day in Enum.GetValues(typeof(WeekDays)))
+        {
+            Console.WriteLine(day);
+        }
+    }
+}
+
+
+using System;
+
+struct Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Person[] persons = new Person[3];
+
+        persons[0] = new Person { Name = "Ahmed", Age = 20 };
+        persons[1] = new Person { Name = "Omar", Age = 22 };
+        persons[2] = new Person { Name = "Ali", Age = 21 };
+
+        foreach (Person person in persons)
+        {
+            Console.WriteLine("Name: " + person.Name);
+            Console.WriteLine("Age: " + person.Age);
+            Console.WriteLine();
+        }
+    }
+}
+
+
+
+using System;
+
+enum Season
+{
+    Spring,
+    Summer,
+    Autumn,
+    Winter
+}
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter season: ");
+        string input = Console.ReadLine();
+
+        if (Enum.TryParse(input, true, out Season season))
+        {
+            switch (season)
+            {
+                case Season.Spring:
+                    Console.WriteLine("March to May");
+                    break;
+
+                case Season.Summer:
+                    Console.WriteLine("June to August");
+                    break;
+
+                case Season.Autumn:
+                    Console.WriteLine("September to November");
+                    break;
+
+                case Season.Winter:
+                    Console.WriteLine("December to February");
+                    break;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid season");
+        }
+    }
+}
+
+
+
+using System;
+
+[Flags]
+enum Permissions
+{
+    None = 0,
+    Read = 1,
+    Write = 2,
+    Delete = 4,
+    Execute = 8
+}
+
+class Program
+{
+    static void Main()
+    {
+        Permissions permission = Permissions.Read | Permissions.Write;
+
+        // Add Permission
+        permission |= Permissions.Delete;
+
+        Console.WriteLine("Permissions: " + permission);
+
+        // Check Permission
+        if ((permission & Permissions.Write) == Permissions.Write)
+        {
+            Console.WriteLine("Write permission exists");
+        }
+
+        // Remove Permission
+        permission &= ~Permissions.Write;
+
+        Console.WriteLine("After removing Write: " + permission);
+    }
+}
+
+
+
+using System;
+
+enum Colors
+{
+    Red,
+    Green,
+    Blue
+}
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter color: ");
+        string input = Console.ReadLine();
+
+        if (Enum.TryParse(input, true, out Colors color))
+        {
+            Console.WriteLine(color + " is a primary color.");
+        }
+        else
+        {
+            Console.WriteLine("This is not a primary color.");
+        }
+    }
+}
+
+
+
+using System;
+
+struct Point
+{
+    public double X { get; set; }
+    public double Y { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Point p1 = new Point();
+        Point p2 = new Point();
+
+        Console.Write("Enter X1: ");
+        p1.X = double.Parse(Console.ReadLine());
+
+        Console.Write("Enter Y1: ");
+        p1.Y = double.Parse(Console.ReadLine());
+
+        Console.Write("Enter X2: ");
+        p2.X = double.Parse(Console.ReadLine());
+
+        Console.Write("Enter Y2: ");
+        p2.Y = double.Parse(Console.ReadLine());
+
+        double distance = Math.Sqrt(
+            Math.Pow(p2.X - p1.X, 2) +
+            Math.Pow(p2.Y - p1.Y, 2)
+        );
+
+        Console.WriteLine("Distance = " + distance);
+    }
+}
+
+
+
+using System;
+
+struct Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Person[] persons = new Person[3];
+
+        for (int i = 0; i < 3; i++)
+        {
+            Console.Write("Enter name: ");
+            persons[i].Name = Console.ReadLine();
+
+            Console.Write("Enter age: ");
+            persons[i].Age = int.Parse(Console.ReadLine());
+        }
+
+        Person oldest = persons[0];
+
+        for (int i = 1; i < persons.Length; i++)
+        {
+            if (persons[i].Age > oldest.Age)
+            {
+                oldest = persons[i];
+            }
+        }
+
+        Console.WriteLine("Oldest Person:");
+        Console.WriteLine("Name: " + oldest.Name);
+        Console.WriteLine("Age: " + oldest.Age);
+    }
+}
+
+
+
