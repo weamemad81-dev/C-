@@ -1,0 +1,257 @@
+﻿using System;
+
+class Shape
+{
+    public double Width { get; set; }
+    public double Height { get; set; }
+
+    public Shape(double width, double height)
+    {
+        Width = width;
+        Height = height;
+    }
+
+    public double Area()
+    {
+        return Width * Height;
+    }
+
+    public override string ToString()
+    {
+        return $"(Width = {Width}, Height = {Height})";
+    }
+}
+
+class Cube : Shape
+{
+    public double Depth { get; set; }
+
+    public Cube(double width, double height, double depth)
+        : base(width, height)
+    {
+        Depth = depth;
+    }
+
+    public new double Area()
+    {
+        return base.Area() * Depth;
+    }
+
+    public void Print()
+    {
+        Console.WriteLine($"Width = {Width}, Height = {Height}, Depth = {Depth}");
+    }
+}
+
+class Person
+{
+    public int ID { get; set; }
+    public string Name { get; set; }
+    public int Age { get; set; }
+
+    public void Greet()
+    {
+        Console.WriteLine("I am a Person.");
+    }
+
+    public virtual void Display()
+    {
+        Console.WriteLine($"ID: {ID}, Name: {Name}, Age: {Age}");
+    }
+}
+
+class Doctor : Person
+{
+    public string Specialty { get; set; }
+
+    public new void Greet()
+    {
+        Console.WriteLine("I am a Doctor.");
+    }
+
+    public override void Display()
+    {
+        Console.WriteLine($"ID: {ID}, Name: {Name}, Age: {Age}, Specialty: {Specialty}");
+    }
+}
+
+class Engineer : Person
+{
+    public string Field { get; set; }
+    public int YearsOfExperience { get; set; }
+
+    public new void Greet()
+    {
+        Console.WriteLine("I am an Engineer.");
+    }
+
+    public override void Display()
+    {
+        Console.WriteLine($"ID: {ID}, Name: {Name}, Age: {Age}, Field: {Field}, Years of Experience: {YearsOfExperience}");
+    }
+}
+
+interface IMoveable
+{
+    void MoveForward();
+    void MoveBackward();
+}
+
+interface IFlyable
+{
+    void MoveUp();
+    void MoveDown();
+}
+
+class Car : IMoveable
+{
+    public void MoveForward()
+    {
+        Console.WriteLine("Car moves forward on the ground.");
+    }
+
+    public void MoveBackward()
+    {
+        Console.WriteLine("Car moves backward on the ground.");
+    }
+}
+
+class Ship : IMoveable
+{
+    void IMoveable.MoveForward()
+    {
+        Console.WriteLine("Ship moves forward on the sea.");
+    }
+
+    public void MoveBackward()
+    {
+        Console.WriteLine("Ship moves backward on the sea.");
+    }
+}
+
+class Airplane : IMoveable, IFlyable
+{
+    public void MoveForward()
+    {
+        Console.WriteLine("Airplane moves forward in the air.");
+    }
+
+    public void MoveBackward()
+    {
+        Console.WriteLine("Airplane moves backward in the air.");
+    }
+
+    public void MoveUp()
+    {
+        Console.WriteLine("Airplane moves up.");
+    }
+
+    public void MoveDown()
+    {
+        Console.WriteLine("Airplane moves down.");
+    }
+}
+
+interface IVehicle : IMoveable, IFlyable
+{
+}
+
+class Vehicle : IVehicle
+{
+    public virtual void MoveForward()
+    {
+        Console.WriteLine("Vehicle moves forward.");
+    }
+
+    public virtual void MoveBackward()
+    {
+        Console.WriteLine("Vehicle moves backward.");
+    }
+
+    public virtual void MoveUp()
+    {
+        Console.WriteLine("Vehicle moves up.");
+    }
+
+    public virtual void MoveDown()
+    {
+        Console.WriteLine("Vehicle moves down.");
+    }
+}
+
+class Program
+{
+    static void ProcessPerson(Person person)
+    {
+        person.Greet();
+        person.Display();
+    }
+
+    static void Main()
+    {
+        Shape shape = new Shape(2, 3);
+        Console.WriteLine(shape.Area());
+
+        Cube cube = new Cube(2, 3, 4);
+        Console.WriteLine(cube.Area());
+
+        Shape shapeRef = new Cube(2, 3, 4);
+        Console.WriteLine(shapeRef.Area());
+
+        object obj = new Cube(1, 2, 3);
+        Console.WriteLine(obj.ToString());
+
+        Person doctor = new Doctor
+        {
+            ID = 1,
+            Name = "Ahmed",
+            Age = 35,
+            Specialty = "Cardiology"
+        };
+
+        Person engineer = new Engineer
+        {
+            ID = 2,
+            Name = "Omar",
+            Age = 30,
+            Field = "Software Engineering",
+            YearsOfExperience = 5
+        };
+
+        ProcessPerson(doctor);
+        ProcessPerson(engineer);
+
+        Car car = new Car();
+        car.MoveForward();
+        car.MoveBackward();
+
+        Ship ship = new Ship();
+        IMoveable shipRef = ship;
+        shipRef.MoveForward();
+        shipRef.MoveBackward();
+
+        Airplane airplane = new Airplane();
+        airplane.MoveForward();
+        airplane.MoveBackward();
+        airplane.MoveUp();
+        airplane.MoveDown();
+
+        IMoveable carRef = new Car();
+        carRef.MoveForward();
+        carRef.MoveBackward();
+
+        IMoveable planeRef = new Airplane();
+        planeRef.MoveForward();
+        planeRef.MoveBackward();
+
+        IFlyable flyRef = new Airplane();
+        flyRef.MoveUp();
+        flyRef.MoveDown();
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.MoveForward();
+        vehicle.MoveBackward();
+        vehicle.MoveUp();
+        vehicle.MoveDown();
+    }
+}
