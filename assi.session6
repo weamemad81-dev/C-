@@ -1,0 +1,136 @@
+﻿using System;
+
+enum SecurityLevel
+{
+    Guest,
+    Developer,
+    Secretary,
+    DBA,
+    SecurityOfficer
+}
+
+enum Gender
+{
+    M,
+    F
+}
+
+class HiringDate
+{
+    public int Day { get; set; }
+    public int Month { get; set; }
+    public int Year { get; set; }
+
+    public HiringDate()
+    {
+        Day = 1;
+        Month = 1;
+        Year = 2000;
+    }
+
+    public HiringDate(int day, int month, int year)
+    {
+        Day = day;
+        Month = month;
+        Year = year;
+    }
+
+    public override string ToString()
+    {
+        return $"{Day:D2}/{Month:D2}/{Year}";
+    }
+}
+
+class Employee
+{
+    private Gender gender;
+
+    public int ID { get; set; }
+    public string Name { get; set; }
+    public SecurityLevel SecurityLevel { get; set; }
+    public decimal Salary { get; set; }
+    public HiringDate HireDate { get; set; }
+
+    public Gender Gender
+    {
+        get
+        {
+            return gender;
+        }
+        set
+        {
+            if (value == Gender.M || value == Gender.F)
+                gender = value;
+            else
+                gender = Gender.M;
+        }
+    }
+
+    public Employee()
+    {
+        ID = 0;
+        Name = "Unknown";
+        SecurityLevel = SecurityLevel.Guest;
+        Salary = 0;
+        HireDate = new HiringDate();
+        Gender = Gender.M;
+    }
+
+    public Employee(int id, string name, SecurityLevel securityLevel,
+                    decimal salary, HiringDate hireDate, Gender gender)
+    {
+        ID = id;
+        Name = name;
+        SecurityLevel = securityLevel;
+        Salary = salary;
+        HireDate = hireDate;
+        Gender = gender;
+    }
+
+    public override string ToString()
+    {
+        return String.Format(
+            "ID: {0}, Name: {1}, Security Level: {2}, Salary: {3:C}, Hire Date: {4}, Gender: {5}",
+            ID, Name, SecurityLevel, Salary, HireDate, Gender);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Employee[] EmpArr = new Employee[3];
+
+        EmpArr[0] = new Employee(
+            1,
+            "Ahmed",
+            SecurityLevel.DBA,
+            25000,
+            new HiringDate(15, 5, 2020),
+            Gender.M
+        );
+
+        EmpArr[1] = new Employee(
+            2,
+            "Sara",
+            SecurityLevel.Guest,
+            8000,
+            new HiringDate(10, 8, 2022),
+            Gender.F
+        );
+
+        EmpArr[2] = new Employee(
+            3,
+            "Omar",
+            SecurityLevel.SecurityOfficer,
+            30000,
+            new HiringDate(20, 3, 2019),
+            Gender.M
+        );
+
+        for (int i = 0; i < EmpArr.Length; i++)
+        {
+            Console.WriteLine(EmpArr[i]);
+        }
+    }
+}
