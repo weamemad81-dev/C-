@@ -1,179 +1,269 @@
-﻿using System.Collections;
+using System;
+using System.Collections.Generic;
 
-namespace Assi.session10
+namespace Assi.session11
 {
-    public class BubbleSortOptimization
+    // ==========================================
+    // Section 01: Book Management & Engine
+    // ==========================================
+
+    public class Book
     {
-        public static void OptimizedBubbleSort(int[] array)
+        public string ISBN { get; set; }
+        public string Title { get; set; }
+        public string[] Authors { get; set; }
+        public DateTime PublicationDate { get; set; }
+        public decimal Price { get; set; }
+
+        public Book(string _ISBN, string _Title, string[] _Authors, DateTime _PublicationDate, decimal _Price)
         {
-            if (array == null || array.Length <= 1) return;
+            ISBN = _ISBN;
+            Title = _Title;
+            Authors = _Authors;
+            PublicationDate = _PublicationDate;
+            Price = _Price;
+        }
 
-            int n = array.Length;
-            bool swapped;
+        public override string ToString()
+        {
+            string authorsList = Authors != null ? string.Join(", ", Authors) : "None";
+            return $"ISBN: {ISBN}, Title: '{Title}', Authors: [{authorsList}], Date: {PublicationDate:yyyy-MM-dd}, Price: {Price:C}";
+        }
+    }
 
-            for (int i = 0; i < n - 1; i++)
+    // User-defined delegate
+    public delegate string BookDelegate(Book b);
+
+    public class BookFunctions
+    {
+        public static string GetTitle(Book B) => B != null ? B.Title : string.Empty;
+
+        public static string GetAuthors(Book B) => B?.Authors != null ? string.Join(", ", B.Authors) : string.Empty;
+
+        public static string GetPrice(Book B) => B != null ? B.Price.ToString("C") : string.Empty;
+    }
+
+    public class LibraryEngine
+    {
+        // a. User-defined Delegate
+        public static void ProcessBooks(List<Book> blist, BookDelegate fPtr)
+        {
+            if (blist == null || fPtr == null) return;
+            foreach (Book B in blist)
             {
-                swapped = false;
+                Console.WriteLine(fPtr(B));
+            }
+        }
 
-                for (int j = 0; j < n - 1 - i; j++)
-                {
-                    if (array[j] > array[j + 1])
-                    {
-                        int temp = array[j];
-                        array[j] = array[j + 1];
-                        array[j + 1] = temp;
-
-                        swapped = true;
-                    }
-                }
-
-                if (!swapped)
-                    break;
+        // b. Built-in Delegate Func
+        public static void ProcessBooks(List<Book> blist, Func<Book, string> fPtr)
+        {
+            if (blist == null || fPtr == null) return;
+            foreach (Book B in blist)
+            {
+                Console.WriteLine(fPtr(B));
             }
         }
     }
 
-    public class Range<T> where T : IComparable<T>
+    // ==========================================
+    // Section 02: Order Processing System
+    // ==========================================
+
+    public class Order
     {
-        public T Minimum { get; }
-        public T Maximum { get; }
+        public int Id { get; set; }
+        public string CustomerName { get; set; }
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+    }
 
-        public Range(T minimum, T maximum)
+    // Part 1: User-defined Delegate
+    public delegate decimal PriceCalculator(Order order);
+
+    public class OrderService
+    {
+        // Part 5: Event
+        public event Action<Order> OrderProcessed;
+
+        // Part 1: Delegate Calculation
+        public decimal CalculateOrderPrice(Order order, PriceCalculator calculator)
         {
-            if (minimum.CompareTo(maximum) > 0)
-            {
-                throw new ArgumentException("Minimum value cannot be greater than Maximum value.");
-            }
-
-            Minimum = minimum;
-            Maximum = maximum;
+            return calculator != null ? calculator(order) : 0m;
         }
 
-        public bool IsInRange(T value)
+        // Part 2 & Bonus: Func Calculation
+        public decimal CalculateOrderPrice(Order order, Func<Order, decimal> calculator)
         {
-            return value.CompareTo(Minimum) >= 0 && value.CompareTo(Maximum) <= 0;
+            return calculator != null ? calculator(order) : 0m;
         }
 
-        public T Length()
+        // Part 3: Predicate Validation
+        public bool ValidateOrder(Order order, Predicate<Order> validationRule)
         {
-            dynamic min = Minimum;
-            dynamic max = Maximum;
-            return max - min;
+            return validationRule != null && validationRule(order);
+        }
+
+        // Part 4: Action Execution
+        public void ProcessOrderAction(Order order, Action<Order> action)
+        {
+            action?.Invoke(order);
+        }
+
+        // Part 5 & 7: Main Processing Engine
+        public void ProcessOrder(Order order, Func<Order, decimal> pricingStrategy)
+        {
+            decimal finalPrice = CalculateOrderPrice(order, pricingStrategy);
+            Console.WriteLine($"[OrderService] Processed Order #{order.Id} for {order.CustomerName}. Total: {finalPrice:C}");
+
+            // Raise Event
+            OnOrderProcessed(order);
+        }
+
+        protected virtual void OnOrderProcessed(Order order)
+        {
+            OrderProcessed?.Invoke(order);
         }
     }
 
-    public class ArrayListReverser
+    // ==========================================
+    // Main Program Execution
+    // ==========================================
+
+    internal class Program
     {
-        public static void ReverseArrayListInPlace(ArrayList list)
+        // Event Handlers
+        public static void PrintNotification(Order order) =>
+            Console.WriteLine($"[Handler 1 - Print] Print job created for Order #{order.Id}");
+
+        public static void SendEmailConfirmation(Order order) =>
+            Console.WriteLine($"[Handler 2 - Email] Email sent to {order.CustomerName} for Order #{order.Id}");
+
+        public static void WriteAuditLog(Order order) =>
+            Console.WriteLine($"[Handler 3 - Audit] Audit log updated for Order #{order.Id}");
+
+        static void Main(string[] args)
         {
-            if (list == null || list.Count <= 1) return;
+            Console.WriteLine("==================================================");
+            Console.WriteLine("                  SECTION 01                      ");
+            Console.WriteLine("==================================================\n");
 
-            int left = 0;
-            int right = list.Count - 1;
-
-            while (left < right)
+            List<Book> books = new List<Book>
             {
-                object temp = list[left];
-                list[left] = list[right];
-                list[right] = temp;
+                new Book("978-0131103627", "The C Programming Language", new string[] { "Kernighan", "Ritchie" }, new DateTime(1988, 4, 1), 60.00m),
+                new Book("978-0321765723", "The C++ Programming Language", new string[] { "Bjarne Stroustrup" }, new DateTime(2013, 5, 19), 75.50m)
+            };
 
-                left++;
-                right--;
-            }
-        }
-    }
+            Console.WriteLine("--- a. User-Defined Delegate (GetTitle) ---");
+            LibraryEngine.ProcessBooks(books, new BookDelegate(BookFunctions.GetTitle));
 
-    public class FilterEvenNumbers
-    {
-        public static List<int> GetEvenNumbers(List<int> numbers)
-        {
-            List<int> evenNumbers = new List<int>();
+            Console.WriteLine("\n--- b. Built-in Func Delegate (GetPrice) ---");
+            LibraryEngine.ProcessBooks(books, BookFunctions.GetPrice);
 
-            if (numbers == null) return evenNumbers;
+            Console.WriteLine("\n--- c. Anonymous Method (GetISBN) ---");
+            LibraryEngine.ProcessBooks(books, delegate (Book b) { return b?.ISBN ?? "N/A"; });
 
-            foreach (int number in numbers)
+            Console.WriteLine("\n--- d. Lambda Expression (GetPublicationDate) ---");
+            LibraryEngine.ProcessBooks(books, b => b.PublicationDate.ToShortDateString());
+
+
+            Console.WriteLine("\n==================================================");
+            Console.WriteLine("                  SECTION 02                      ");
+            Console.WriteLine("==================================================\n");
+
+            Order testOrder = new Order
             {
-                if (number % 2 == 0)
-                {
-                    evenNumbers.Add(number);
-                }
-            }
+                Id = 101,
+                CustomerName = "Alice Smith",
+                Price = 50.00m,
+                Quantity = 3
+            };
 
-            return evenNumbers;
-        }
-    }
+            OrderService service = new OrderService();
 
-    public class FixedSizeList<T>
-    {
-        private readonly T[] _items;
-        private int _count;
+            // Part 1 & Part 2 & Bonus Pricing Strategies
+            Console.WriteLine("--- Pricing Strategies ---");
+            Func<Order, decimal> normalPrice = o => o.Price * o.Quantity;
+            Func<Order, decimal> discount10 = o => (o.Price * o.Quantity) * 0.90m;
+            Func<Order, decimal> discount20 = o => (o.Price * o.Quantity) * 0.80m;
+            Func<Order, decimal> vipDiscount = o => (o.Price * o.Quantity) * 0.70m;
 
-        public int Capacity { get; }
-        public int Count => _count;
+            Console.WriteLine($"Normal Total: {service.CalculateOrderPrice(testOrder, normalPrice):C}");
+            Console.WriteLine($"10% Discount: {service.CalculateOrderPrice(testOrder, discount10):C}");
 
-        public FixedSizeList(int capacity)
-        {
-            if (capacity <= 0)
-            {
-                throw new ArgumentException("Capacity must be greater than zero.", nameof(capacity));
-            }
+            // Part 3: Validations
+            Console.WriteLine("\n--- Order Validations ---");
+            Console.WriteLine($"Quantity > 0: {service.ValidateOrder(testOrder, o => o.Quantity > 0)}");
+            Console.WriteLine($"Price > 0: {service.ValidateOrder(testOrder, o => o.Price > 0)}");
+            Console.WriteLine($"Has Customer Name: {service.ValidateOrder(testOrder, o => !string.IsNullOrWhiteSpace(o.CustomerName))}");
 
-            Capacity = capacity;
-            _items = new T[capacity];
-            _count = 0;
-        }
+            // Part 4: Actions
+            Console.WriteLine("\n--- Custom Actions ---");
+            service.ProcessOrderAction(testOrder, o => Console.WriteLine($"[Action] Custom log for Order #{o.Id}"));
 
-        public void Add(T item)
-        {
-            if (_count >= Capacity)
-            {
-                throw new InvalidOperationException($"Cannot add item. The list has reached its maximum capacity of {Capacity}.");
-            }
+            // Part 5 & 6: Events Multicast & Unsubscription
+            Console.WriteLine("\n--- Event Multicast Subscriptions ---");
+            service.OrderProcessed += PrintNotification;
+            service.OrderProcessed += SendEmailConfirmation;
+            service.OrderProcessed += WriteAuditLog;
 
-            _items[_count] = item;
-            _count++;
-        }
+            Console.WriteLine("\nFiring Event with 3 Subscribed Handlers:");
+            service.ProcessOrder(testOrder, vipDiscount);
 
-        public T Get(int index)
-        {
-            if (index < 0 || index >= _count)
-            {
-                throw new IndexOutOfRangeException($"Index {index} is out of valid range [0, {_count - 1}].");
-            }
+            Console.WriteLine("\nUnsubscribing Handler 1 (PrintNotification)...");
+            service.OrderProcessed -= PrintNotification;
 
-            return _items[index];
-        }
-    }
-
-    public class StringHelper
-    {
-        public static int FirstUniqChar(string s)
-        {
-            if (string.IsNullOrEmpty(s)) return -1;
-
-            Dictionary<char, int> charCounts = new Dictionary<char, int>();
-
-            foreach (char c in s)
-            {
-                if (charCounts.ContainsKey(c))
-                {
-                    charCounts[c]++;
-                }
-                else
-                {
-                    charCounts[c] = 1;
-                }
-            }
-
-            for (int i = 0; i < s.Length; i++)
-            {
-                if (charCounts[s[i]] == 1)
-                {
-                    return i;
-                }
-            }
-
-            return -1;
+            Console.WriteLine("\nFiring Event again (2 Handlers Remaining):");
+            service.ProcessOrder(testOrder, discount20);
         }
     }
 }
+
+/* 
+================================================================================
+CONCEPTUAL ANSWERS (Questions Part 2, Part 3 & README Questions)
+================================================================================
+
+[Part 2 Question]
+Q: What problem does Func<> solve compared with creating a custom delegate?
+A: Func<> reduces boilerplate code by eliminating the need to explicitly define new delegate types 
+   (e.g. "public delegate ..."). It standardizes delegate types across the C# ecosystem and LINQ.
+
+[Part 3 Question]
+Q: Why is Predicate<Order> more expressive here than Func<Order, bool>?
+A: Predicate<T> clearly conveys semantic intent: it specifically indicates a evaluation or 
+   filtering rule (checking if a condition is true/false), whereas Func<Order, bool> is a general purpose function.
+
+[Q1] Difference between PriceCalculator and Func<Order, decimal>?
+- PriceCalculator is a custom user defined delegate.
+- Func<Order, decimal> is a built in generic delegate.
+- They are distinct types in C# and cannot be directly assigned to each other without conversion.
+
+[Q2] Difference between Action<Order> and Func<Order, decimal>?
+- Action<Order> returns void (used for executing side effects like printing/logging).
+- Func<Order, decimal> returns a decimal (used for calculations and returning values).
+
+[Q3] Why does Predicate<T> return bool? What problem is it designed for?
+- It returns bool because it evaluates whether an object fulfills a condition (true or false).
+- It is designed for filtering, validation, and conditional search operations.
+
+[Q4] Difference between a delegate and an event?
+- A delegate is a type holding references to methods.
+- An event is an encapsulation wrapper around a delegate that restricts external code 
+  to only subscribing (+=) and unsubscribing (-=), preventing external invocation.
+
+[Q5] Why can't external code invoke an event declared in another class?
+- To enforce encapsulation. Only the class defining the event controls when and how the event is raised.
+
+[Q6] What happens when multiple handlers subscribe to the same event?
+- The underlying delegate creates a multicast invocation chain and executes each handler sequentially.
+
+[Q7] Breakdown of: orderService.OrderProcessed += HandleOrderProcessed;
+- orderService.OrderProcessed : The event target.
+- +=                           : Operator to register/subscribe a handler method.
+- HandleOrderProcessed         : The callback method matching the delegate signature.
+
+[Q8 - Challenge] Difference between Action<Order> and event Action<Order>?
+- Action<Order> as a public field allows external code to raise it directly or overwrite subscribers (= null).
+- event Action<Order> prevents direct invocation or overwriting from outside the class, securing subscriber state.
+*/
