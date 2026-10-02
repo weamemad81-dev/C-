@@ -1,0 +1,179 @@
+﻿using System.Collections;
+
+namespace Assi.session10
+{
+    public class BubbleSortOptimization
+    {
+        public static void OptimizedBubbleSort(int[] array)
+        {
+            if (array == null || array.Length <= 1) return;
+
+            int n = array.Length;
+            bool swapped;
+
+            for (int i = 0; i < n - 1; i++)
+            {
+                swapped = false;
+
+                for (int j = 0; j < n - 1 - i; j++)
+                {
+                    if (array[j] > array[j + 1])
+                    {
+                        int temp = array[j];
+                        array[j] = array[j + 1];
+                        array[j + 1] = temp;
+
+                        swapped = true;
+                    }
+                }
+
+                if (!swapped)
+                    break;
+            }
+        }
+    }
+
+    public class Range<T> where T : IComparable<T>
+    {
+        public T Minimum { get; }
+        public T Maximum { get; }
+
+        public Range(T minimum, T maximum)
+        {
+            if (minimum.CompareTo(maximum) > 0)
+            {
+                throw new ArgumentException("Minimum value cannot be greater than Maximum value.");
+            }
+
+            Minimum = minimum;
+            Maximum = maximum;
+        }
+
+        public bool IsInRange(T value)
+        {
+            return value.CompareTo(Minimum) >= 0 && value.CompareTo(Maximum) <= 0;
+        }
+
+        public T Length()
+        {
+            dynamic min = Minimum;
+            dynamic max = Maximum;
+            return max - min;
+        }
+    }
+
+    public class ArrayListReverser
+    {
+        public static void ReverseArrayListInPlace(ArrayList list)
+        {
+            if (list == null || list.Count <= 1) return;
+
+            int left = 0;
+            int right = list.Count - 1;
+
+            while (left < right)
+            {
+                object temp = list[left];
+                list[left] = list[right];
+                list[right] = temp;
+
+                left++;
+                right--;
+            }
+        }
+    }
+
+    public class FilterEvenNumbers
+    {
+        public static List<int> GetEvenNumbers(List<int> numbers)
+        {
+            List<int> evenNumbers = new List<int>();
+
+            if (numbers == null) return evenNumbers;
+
+            foreach (int number in numbers)
+            {
+                if (number % 2 == 0)
+                {
+                    evenNumbers.Add(number);
+                }
+            }
+
+            return evenNumbers;
+        }
+    }
+
+    public class FixedSizeList<T>
+    {
+        private readonly T[] _items;
+        private int _count;
+
+        public int Capacity { get; }
+        public int Count => _count;
+
+        public FixedSizeList(int capacity)
+        {
+            if (capacity <= 0)
+            {
+                throw new ArgumentException("Capacity must be greater than zero.", nameof(capacity));
+            }
+
+            Capacity = capacity;
+            _items = new T[capacity];
+            _count = 0;
+        }
+
+        public void Add(T item)
+        {
+            if (_count >= Capacity)
+            {
+                throw new InvalidOperationException($"Cannot add item. The list has reached its maximum capacity of {Capacity}.");
+            }
+
+            _items[_count] = item;
+            _count++;
+        }
+
+        public T Get(int index)
+        {
+            if (index < 0 || index >= _count)
+            {
+                throw new IndexOutOfRangeException($"Index {index} is out of valid range [0, {_count - 1}].");
+            }
+
+            return _items[index];
+        }
+    }
+
+    public class StringHelper
+    {
+        public static int FirstUniqChar(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return -1;
+
+            Dictionary<char, int> charCounts = new Dictionary<char, int>();
+
+            foreach (char c in s)
+            {
+                if (charCounts.ContainsKey(c))
+                {
+                    charCounts[c]++;
+                }
+                else
+                {
+                    charCounts[c] = 1;
+                }
+            }
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (charCounts[s[i]] == 1)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+    }
+}
