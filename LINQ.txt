@@ -1,0 +1,9 @@
+﻿Build started at 9:24 PM...
+1>------ Build started: Project: ConsoleApp3, Configuration: Debug Any CPU ------
+Restored C:\Users\Dina\Downloads\ConsoleApp3\ConsoleApp3.csproj (in 7 ms).
+1>  Skipping analyzers to speed up the build. You can execute 'Build' or 'Rebuild' command to run analyzers.
+1>C:\Users\Dina\Downloads\ConsoleApp3\ListGenerator.cs(72,2,72,3): error CS1519: Invalid token '}' in a member declaration
+1>C:\Users\Dina\Downloads\ConsoleApp3\ListGenerator.cs(73,32,73,32): error CS1001: Identifier expected
+1>C:\Users\Dina\Downloads\ConsoleApp3\ListGenerator.cs(74,3,74,3): error CS1513: } expected
+========== Build: 0 succeeded, 1 failed, 0 up-to-date, 0 skipped ==========
+========== Build completed at 9:24 PM and took 00.821 seconds ==========
